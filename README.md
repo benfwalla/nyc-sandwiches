@@ -1,6 +1,8 @@
 # NYC Sandwiches
 
-A tool to turn the New York Times' ["57 Sandwiches That Define New York City"](https://www.nytimes.com/interactive/2024/05/21/dining/nyc-sandwiches.html) article into a searchable, filterable CSV.
+A tool to turn the New York Times' ["57 Sandwiches That Define New York City"](https://www.nytimes.com/interactive/2024/dining/best-nyc-sandwiches.html) article into a searchable, filterable CSV.
+
+[Google Sheet](https://docs.google.com/spreadsheets/d/1pmjf6pLDZmWO4UBwBiI3MO3OpazAt4PWD8mxVPwjqTQ/edit?usp=sharing)
 
 
 ## Files
