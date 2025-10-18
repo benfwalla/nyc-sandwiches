@@ -144,7 +144,8 @@ def extract_sandwiches_from_json(json_file):
                     if not restaurant_name:
                         continue
                     
-                    address, website, price = parse_metadata(val.get('_metadata', ''))
+                    # Featured sandwiches use 'metadata' (no underscore)
+                    address, website, price = parse_metadata(val.get('metadata', ''))
                     
                     # Clean description (remove HTML tags)
                     description = val.get('blurb', '')
