@@ -4,12 +4,11 @@ Some scripts to turn the New York Times' ["57 Sandwiches That Define New York Ci
 
 [Link to Google Sheet](https://docs.google.com/spreadsheets/d/1pmjf6pLDZmWO4UBwBiI3MO3OpazAt4PWD8mxVPwjqTQ/edit?usp=sharing)
 
+![57 Sandwiches That Define New York City NY Times](<nyt-hero.png>)
 
 ## Files
 
 - `nyc-sandwiches.html` - The original NYT article (saved)
-- `output/nyc-sandwiches-data.json` - Raw json data from the html used to create the csv
+- `output/nyc-sandwiches-data.json` - Raw JSON data from the HTML used to create the CSV
 - `csv_extractor/main.py` - The script that creates the CSV
 - `output/nyc-sandwiches.csv` - The searchable data
-
-![57 Sandwiches That Define New York City NY Times](<nyt-hero.png>)

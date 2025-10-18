@@ -1,10 +1,6 @@
 import csv
 import json
 import re
-import os
-import time
-import urllib.parse
-import urllib.request
 from bs4 import BeautifulSoup
 
 
@@ -21,54 +17,6 @@ def generate_slug(restaurant_name):
     # Remove leading/trailing hyphens
     slug = slug.strip('-')
     return slug
-
-
-def clean_address_for_geocoding(address):
-    """Clean address to improve geocoding accuracy."""
-    if not address:
-        return ''
-    
-    # Remove cross streets in parentheses - e.g., "178 East Seventh Street (Avenue B)" -> "178 East Seventh Street"
-    address = re.sub(r'\s*\([^)]+\)', '', address)
-    
-    # Add "New York, NY" if not already present
-    if 'New York' not in address and 'NY' not in address:
-        address = f"{address}, New York, NY"
-    
-    return address.strip()
-
-
-def geocode_address(address, api_key):
-    """Geocode an address using OpenCage API."""
-    # Skip if address is empty or "Multiple locations"
-    if not address or address.lower() == 'multiple locations':
-        return None, None
-    
-    # Clean the address
-    clean_addr = clean_address_for_geocoding(address)
-    
-    # URL encode the address
-    encoded_address = urllib.parse.quote(clean_addr)
-    
-    # Build the API URL
-    url = f'https://api.opencagedata.com/geocode/v1/json?q={encoded_address}&key={api_key}&limit=1&no_annotations=1'
-    
-    try:
-        # Make the request
-        with urllib.request.urlopen(url) as response:
-            data = json.loads(response.read().decode())
-        
-        # Check if we got results
-        if data.get('results') and len(data['results']) > 0:
-            geometry = data['results'][0]['geometry']
-            return geometry['lat'], geometry['lng']
-        else:
-            print(f"  No results for: {clean_addr}")
-            return None, None
-    
-    except Exception as e:
-        print(f"  Error geocoding '{clean_addr}': {e}")
-        return None, None
 
 
 def parse_metadata(metadata_html):
@@ -245,55 +193,6 @@ def extract_sandwiches_from_json(json_file):
     return sandwiches
 
 
-def add_geocoding(sandwiches):
-    """Add latitude and longitude to sandwiches using OpenCage API."""
-    # Get API key from environment
-    api_key = os.environ.get('OPENCAGE_API_KEY')
-    
-    if not api_key:
-        print("Warning: OPENCAGE_API_KEY not found in environment. Skipping geocoding.")
-        print("Set it in your .env file or export it: export OPENCAGE_API_KEY=your_key")
-        # Add empty lat/lng to all sandwiches
-        for sandwich in sandwiches:
-            sandwich['latitude'] = ''
-            sandwich['longitude'] = ''
-        return sandwiches
-    
-    print(f"\nGeocoding {len(sandwiches)} addresses...")
-    geocoded_count = 0
-    skipped_count = 0
-    
-    for i, sandwich in enumerate(sandwiches, 1):
-        address = sandwich.get('address', '')
-        
-        # Skip if no address or "Multiple locations"
-        if not address or address.lower() == 'multiple locations':
-            sandwich['latitude'] = ''
-            sandwich['longitude'] = ''
-            skipped_count += 1
-            continue
-        
-        print(f"  [{i}/{len(sandwiches)}] Geocoding: {sandwich['restaurant_name']}...")
-        
-        lat, lng = geocode_address(address, api_key)
-        
-        if lat and lng:
-            sandwich['latitude'] = lat
-            sandwich['longitude'] = lng
-            geocoded_count += 1
-        else:
-            sandwich['latitude'] = ''
-            sandwich['longitude'] = ''
-        
-        # Rate limiting: free tier allows 1 request per second
-        # Add a small delay to be safe
-        if i < len(sandwiches):  # Don't sleep after the last one
-            time.sleep(1.1)
-    
-    print(f"\nGeocoding complete: {geocoded_count} geocoded, {skipped_count} skipped")
-    return sandwiches
-
-
 def save_to_csv(sandwiches, output_file):
     """Save sandwich data to CSV file."""
     fieldnames = [
@@ -306,8 +205,6 @@ def save_to_csv(sandwiches, output_file):
         'address',
         'website',
         'price',
-        'latitude',
-        'longitude',
         'description'
     ]
     
@@ -327,9 +224,6 @@ def main():
     sandwiches = extract_sandwiches_from_json(json_file)
     
     print(f"Found {len(sandwiches)} sandwiches")
-    
-    # Add geocoding
-    sandwiches = add_geocoding(sandwiches)
     
     save_to_csv(sandwiches, output_file)
     
