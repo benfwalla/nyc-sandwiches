@@ -4,15 +4,19 @@ import re
 from bs4 import BeautifulSoup
 
 
-def generate_anchor_id(restaurant_name):
-    """Generate URL anchor ID from restaurant name."""
-    # Convert to lowercase, replace special chars with hyphens
-    anchor = restaurant_name.lower()
-    anchor = re.sub(r'[^\w\s-]', '', anchor)  # Remove special chars except spaces and hyphens
-    anchor = re.sub(r'[\s]+', '-', anchor)     # Replace spaces with hyphens
-    anchor = re.sub(r'-+', '-', anchor)        # Replace multiple hyphens with single
-    anchor = anchor.strip('-')                 # Remove leading/trailing hyphens
-    return anchor
+def generate_slug(restaurant_name):
+    """Generate URL slug from restaurant name."""
+    # Convert to lowercase
+    slug = restaurant_name.lower()
+    # Remove special characters (apostrophes, commas, ampersands, etc) - keep only letters, numbers, spaces, hyphens
+    slug = re.sub(r'[^a-z0-9\s-]', '', slug)
+    # Replace spaces with hyphens
+    slug = slug.replace(' ', '-')
+    # Replace multiple hyphens with single hyphen
+    slug = re.sub(r'-+', '-', slug)
+    # Remove leading/trailing hyphens
+    slug = slug.strip('-')
+    return slug
 
 
 def parse_metadata(metadata_html):
@@ -94,13 +98,16 @@ def extract_sandwiches_from_json(json_file):
                     description = val.get('blurb', '')
                     description = re.sub(r'<[^>]+>', '', description)  # Remove HTML tags
                     
+                    # Generate slug for featured sandwich
+                    slug = generate_slug(restaurant_name)
+                    
                     sandwich_data = {
                         'restaurant_name': restaurant_name,
                         'sandwich_name': val.get('sandwich', ''),
                         'category': category_name,
                         'is_featured': 1,
                         'image_url': '',  # Featured sandwiches often don't have images in the data
-                        'nyt_link': 'https://www.nytimes.com/interactive/2024/05/21/dining/nyc-sandwiches.html',
+                        'nyt_link': f'https://www.nytimes.com/shared/v2/interactive/2024/dining/best-nyc-sandwiches/{slug}.html',
                         'address': address,
                         'website': website,
                         'price': price,
@@ -141,8 +148,8 @@ def extract_sandwiches_from_json(json_file):
                         description = sandwich.get('blurb', '')
                         description = re.sub(r'<[^>]+>', '', description)
                         
-                        # Generate anchor ID
-                        anchor_id = generate_anchor_id(restaurant_name)
+                        # Generate slug for URL
+                        slug = generate_slug(restaurant_name)
                         
                         sandwich_data = {
                             'restaurant_name': restaurant_name,
@@ -150,7 +157,7 @@ def extract_sandwiches_from_json(json_file):
                             'category': category_name,
                             'is_featured': 0,
                             'image_url': image_url,
-                            'nyt_link': f'https://www.nytimes.com/interactive/2024/05/21/dining/nyc-sandwiches.html#{anchor_id}',
+                            'nyt_link': f'https://www.nytimes.com/shared/v2/interactive/2024/dining/best-nyc-sandwiches/{slug}.html',
                             'address': address,
                             'website': website,
                             'price': price,
