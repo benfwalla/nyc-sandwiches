@@ -97,10 +97,30 @@ def parse_metadata(metadata_html):
         # If no price, address is before website
         if link:
             address = text.split(link.get_text())[0].strip().rstrip(',')
-        else:
             address = text.strip()
     
     return address, website, price
+
+
+def get_featured_image_url(category):
+    """Generate featured sandwich image URL based on category."""
+    # Map category names to image prefixes
+    category_to_prefix = {
+        'Breakfast Bangers': 'breakfast',
+        'Hero Worship': 'italian',
+        'Veg In': 'veg',
+        'Pastrami City': 'pastrami',
+        'Gotham Greats': 'classics',
+        '\u2018Let Me Get Uhh\u2026\u2019': 'deli',  # Unicode for curly quotes and ellipsis
+        'Diner Party': 'diner',
+        'Honorary New Yorkers': 'adopted',
+        'Extremely Online': 'onlyny',
+    }
+    
+    prefix = category_to_prefix.get(category, '')
+    if prefix:
+        return f'https://static01.nytimes.com/newsgraphics/2024-05-21-sandwich/_big_assets/{prefix}-2.png'
+    return ''
 
 
 def extract_sandwiches_from_json(json_file):
@@ -154,12 +174,15 @@ def extract_sandwiches_from_json(json_file):
                     # Generate slug for featured sandwich
                     slug = generate_slug(restaurant_name)
                     
+                    # Generate featured image URL based on category
+                    image_url = get_featured_image_url(category_name)
+                    
                     sandwich_data = {
                         'restaurant_name': restaurant_name,
                         'sandwich_name': val.get('sandwich', ''),
                         'category': category_name,
                         'is_featured': 1,
-                        'image_url': '',  # Featured sandwiches often don't have images in the data
+                        'image_url': image_url,
                         'nyt_link': f'https://www.nytimes.com/shared/v2/interactive/2024/dining/best-nyc-sandwiches/{slug}.html',
                         'address': address,
                         'website': website,
