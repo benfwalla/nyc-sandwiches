@@ -2,7 +2,8 @@
 
 Some scripts to turn the New York Times' ["57 Sandwiches That Define New York City"](https://www.nytimes.com/interactive/2024/dining/best-nyc-sandwiches.html) article into a searchable, filterable CSV.
 
-[Link to Google Sheet](https://docs.google.com/spreadsheets/d/1pmjf6pLDZmWO4UBwBiI3MO3OpazAt4PWD8mxVPwjqTQ/edit?usp=sharing)
+- [Link to Google Sheet](https://docs.google.com/spreadsheets/d/1pmjf6pLDZmWO4UBwBiI3MO3OpazAt4PWD8mxVPwjqTQ/edit?usp=sharing)
+- [Link to Google Map View](https://www.google.com/maps/d/u/0/edit?mid=16oLIRoA2pxbuNWc9m4Z1DsVjTI4E32w&usp=sharing)
 
 ![57 Sandwiches That Define New York City NY Times](<nyt-hero.png>)
 
