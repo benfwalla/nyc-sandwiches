@@ -11,3 +11,5 @@ Some scripts to turn the New York Times' ["57 Sandwiches That Define New York Ci
 - `output/nyc-sandwiches-data.json` - Raw json data from the html used to create the csv
 - `csv_extractor/main.py` - The script that creates the CSV
 - `output/nyc-sandwiches.csv` - The searchable data
+
+![57 Sandwiches That Define New York City NY Times](<nyt-hero.png>)
